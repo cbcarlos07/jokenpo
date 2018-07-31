@@ -18,16 +18,22 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     String opcao;
+    int resultado;
+    private ImageView imageView;
+    private TextView  textView;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        imageView = findViewById(R.id.imagePadrao);
+        textView = findViewById(R.id.textoResultado);
     }
 
     public void pedra(View view){
         ImageView imageView = findViewById(R.id.imagePedra);
         imageView.setImageResource(R.drawable.pedra);
+
         this.jogar("pedra");
     }
 
@@ -45,25 +51,19 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("ResourceAsColor")
     public void jogar(String opcao){
+        int[] opcoes = {R.drawable.pedra, R.drawable.papel, R.drawable.tesoura};
 
-        executarImagem(  );
+        int n = new Random().nextInt(3);
+        resultado = opcoes[n];
+        textView.setText("Aguarde");
+        executarImagem(   );
         this.opcao = opcao;
-        mostraResultado();
+
 
 
 
     }
     private void mostraResultado(  ){
-        Log.d("Opcao", opcao);
-        String[] opcoes = {"pedra", "papel", "tesoura"};
-
-        int n = new Random().nextInt(3);
-
-
-
-        String resultado = opcoes[n];
-        ImageView imageView = findViewById(R.id.imagePadrao);
-        TextView textView = findViewById(R.id.textoResultado);
 
         imageView.setImageResource(R.drawable.transparente);
 
@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
             AnimationDrawable animationDrawable = (AnimationDrawable) imageView.getBackground();
             animationDrawable.start();*/
 
-
+        // Log.d("Resultado: ", resultado);
         switch (resultado){
-            case "pedra":
+            case R.drawable.pedra:
                 // animationDrawable.stop();
                 imageView.setImageResource(R.drawable.pedra);
 
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
 
-            case "papel":
+            case R.drawable.papel:
 
                 imageView.setImageResource(R.drawable.papel);
 
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
 
-            case "tesoura":
+            case R.drawable.tesoura:
 
                 imageView.setImageResource(R.drawable.tesoura);
 
@@ -130,80 +130,53 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-    private void executarImagem(){
+    private void executarImagem(  ){
 
-       Thread t = new Thread(new Runnable() {
-           @Override
-           public void run() {
-               ImageView imageView = findViewById(R.id.imagePadrao);
-               int m = 0;
-               int n = 3;
-               List<Integer> op = new ArrayList<Integer>();
-               op.add(R.drawable.pedra);
-               op.add(R.drawable.papel);
-               op.add(R.drawable.tesoura);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                imageView = findViewById(R.id.imagePadrao);
+                int m = 0;
+                int n = 0;
+                List<Integer> op = new ArrayList<Integer>();
+                op.add(R.drawable.pedra);
+                op.add(R.drawable.papel);
+                op.add(R.drawable.tesoura);
 
-               Collections.sort( op );
+                Collections.shuffle( op );
 
-               Iterator iterator = op.iterator();
-               for (int i = 0; i < 3; i++){
-                   while (iterator.hasNext()){
-                       m = (int) iterator.next();
-                       imageView.setImageResource( m );
-                       try {
-                           Thread.sleep(100);
-                       } catch (InterruptedException e) {
-                           e.printStackTrace();
-                       }
-                   }
-               }
-           }
-       });
-       t.start();
-
-       /*{
-            public void run(){
-
-
-                *//*
-                for (int i = 0; i < 3; i++){
-
-                    m = r.nextInt(n);
-                    Log.d("Number: ", ""+n);
-                    imageView.setImageResource(op[m]);
-                    n--;
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                Iterator iterator = op.iterator();
+                for (int i = 0; i < 6; i++){
+                    n++;
+                    Log.d("Incremento", ""+n);
+                    while (iterator.hasNext()){
+                        m = (int) iterator.next();
+                        Log.d( "Numero", ""+m );
+                        imageView.setImageResource( m );
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-
-                    Log.d("Number: ", ""+n);
-                    m = r.nextInt(n);
-                    imageView.setImageResource(op[m]);
-                    n--;
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    Collections.shuffle( op );
+                    iterator = op.iterator();
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mostraResultado();
                     }
-
-                  ///  Log.d("Number: ", ""+m);
-
-                    Log.d("Numero", ""+n);
-                    m = r.nextInt(n);
-                    imageView.setImageResource(op[m]);
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    n = 3;
-                }*//*
+                });
 
             }
+        });
+        t.start();
+        imageView = findViewById(R.id.imagePadrao);
+        imageView.setImageResource( resultado );
 
-        }.start();*/
+
+
 
 
 
